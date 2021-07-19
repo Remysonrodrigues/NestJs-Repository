@@ -1,17 +1,20 @@
 import { 
     Body, 
     Controller, 
+    DefaultValuePipe, 
     ForbiddenException, 
     Get, 
-    HttpCode, 
-    HttpStatus, 
-    Param, 
-    ParseIntPipe, 
+    HttpCode,     
+    Param,     
+    ParseBoolPipe,     
     Post, 
-    UseFilters 
+    Query, 
+    UseFilters
 } from '@nestjs/common';
 import { CreateCatDto } from 'src/cats/dto/create-cat.dto';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+import { ParseIntPipe } from 'src/validations/parse-int.pipe';
+import { ValidationPipe } from 'src/validations/validation.pipe';
 import { CatsService } from './cats.service'
 import { Cat } from './interfaces/cat.interface'
 
@@ -23,7 +26,9 @@ export class CatsController {
 
     @Post()
     @HttpCode(201)
-    async create(@Body() createCatDto: CreateCatDto) {
+    async create(
+        @Body(new ValidationPipe()) createCatDto: CreateCatDto
+    ) {
         try {
             this.catsService.create(createCatDto);   
         } catch (error) {
@@ -33,16 +38,16 @@ export class CatsController {
     
     @Get()
     @HttpCode(200)
-    async findAll(): Promise<Cat[]> {
-        return this.catsService.findAll();
+    async findAll(
+        @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe) activeOnly: boolean,
+        @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+    ): Promise<Cat[]> {
+        return this.catsService.findAll({ activeOnly, page });
     }
 
     @Get(':id')
     @HttpCode(200)
-    async findOne(
-        @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) 
-        id: number
-    ) {        
+    async findOne(@Param('id', new ParseIntPipe()) id: number) {        
         return this.catsService.findOne(id);
     }
 

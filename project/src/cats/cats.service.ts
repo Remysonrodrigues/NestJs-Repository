@@ -10,7 +10,7 @@ export class CatsService {
       this.cats.push(cat);
     }
   
-    findAll(): Cat[] {
+    findAll(data: object): Cat[] {
       return this.cats;
     }
 
