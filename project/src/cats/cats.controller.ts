@@ -9,14 +9,18 @@ import {
     ParseBoolPipe,     
     Post, 
     Query, 
-    UseFilters
+    SetMetadata, 
+    UseFilters,
+    UseGuards
 } from '@nestjs/common';
 import { CreateCatDto } from 'src/cats/dto/create-cat.dto';
+import { Roles } from 'src/decorators/roles.decorator';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
+import { RolesGuard } from 'src/guards/roles.guard';
 import { ParseIntPipe } from 'src/validations/parse-int.pipe';
 import { ValidationPipe } from 'src/validations/validation.pipe';
-import { CatsService } from './cats.service'
-import { Cat } from './interfaces/cat.interface'
+import { CatsService } from './cats.service';
+import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 @UseFilters(new HttpExceptionFilter())
@@ -26,6 +30,7 @@ export class CatsController {
 
     @Post()
     @HttpCode(201)
+    @Roles('admin')
     async create(
         @Body(new ValidationPipe()) createCatDto: CreateCatDto
     ) {
