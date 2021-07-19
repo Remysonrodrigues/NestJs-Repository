@@ -4,7 +4,9 @@ import {
     ForbiddenException, 
     Get, 
     HttpCode, 
+    HttpStatus, 
     Param, 
+    ParseIntPipe, 
     Post, 
     UseFilters 
 } from '@nestjs/common';
@@ -37,8 +39,11 @@ export class CatsController {
 
     @Get(':id')
     @HttpCode(200)
-    findOne(@Param('id') id: string): string {        
-        return `This action returns a #${id} cat`;
+    async findOne(
+        @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) 
+        id: number
+    ) {        
+        return this.catsService.findOne(id);
     }
 
 }
