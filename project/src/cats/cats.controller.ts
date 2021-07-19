@@ -1,9 +1,20 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Req } from '@nestjs/common';
+import { 
+    Body, 
+    Controller, 
+    ForbiddenException, 
+    Get, 
+    HttpCode, 
+    Param, 
+    Post, 
+    UseFilters 
+} from '@nestjs/common';
 import { CreateCatDto } from 'src/cats/dto/create-cat.dto';
+import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
 import { CatsService } from './cats.service'
 import { Cat } from './interfaces/cat.interface'
 
 @Controller('cats')
+@UseFilters(new HttpExceptionFilter())
 export class CatsController {
 
     constructor(private catsService: CatsService) {}
@@ -11,7 +22,11 @@ export class CatsController {
     @Post()
     @HttpCode(201)
     async create(@Body() createCatDto: CreateCatDto) {
-        this.catsService.create(createCatDto);
+        try {
+            this.catsService.create(createCatDto);   
+        } catch (error) {
+            throw new ForbiddenException(error);
+        }
     }
     
     @Get()
