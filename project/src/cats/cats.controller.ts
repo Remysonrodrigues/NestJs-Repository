@@ -9,14 +9,13 @@ import {
     ParseBoolPipe,     
     Post, 
     Query, 
-    SetMetadata, 
     UseFilters,
-    UseGuards
+    UseInterceptors
 } from '@nestjs/common';
 import { CreateCatDto } from 'src/cats/dto/create-cat.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { HttpExceptionFilter } from 'src/exceptions/http-exception.filter';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 import { ParseIntPipe } from 'src/validations/parse-int.pipe';
 import { ValidationPipe } from 'src/validations/validation.pipe';
 import { CatsService } from './cats.service';
@@ -24,6 +23,7 @@ import { Cat } from './interfaces/cat.interface';
 
 @Controller('cats')
 @UseFilters(new HttpExceptionFilter())
+@UseInterceptors(new LoggingInterceptor())
 export class CatsController {
 
     constructor(private catsService: CatsService) {}
