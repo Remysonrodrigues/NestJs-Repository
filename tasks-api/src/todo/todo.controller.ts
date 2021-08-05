@@ -13,7 +13,7 @@ export class TodoController {
     @Get()
     async findAll(): Promise<TodoListDto> {
         const todos = await this.todoService.getAllTodo();
-        return toPromise({ todos });
+        return toPromise(todos);
     }
 
     @Get(':id')
@@ -28,7 +28,7 @@ export class TodoController {
 
     @Put(':id')
     async update(@Param('id') id: string, @Body() todoDto: TodoDto): Promise<TodoDto> {
-        return await this.todoService.updateTodo(todoDto);
+        return await this.todoService.updateTodo(id, todoDto);
     }
 
     @Delete('id')
