@@ -25,13 +25,9 @@ export class TodoService {
 
     }
 
-    async getAllTodo(): Promise<TodoListDto> {
-
-        let todoAll: TodoListDto; 
-
-        todoAll.todos = [...this.todos.map(todo => toTodoDto(todo))];
-
-        return todoAll;
+    async getAllTodo(): Promise<TodoDto[]> {
+        
+        return this.todos.map(todo => toTodoDto(todo));
 
     }
 
@@ -40,7 +36,7 @@ export class TodoService {
         const { name, description } = todoDto
 
         const todo: TodoEntity = {
-            id: uuid(),
+            id: uuid.v4(),
             name,
             description,
         };

@@ -13,7 +13,7 @@ export class TodoController {
     @Get()
     async findAll(): Promise<TodoListDto> {
         const todos = await this.todoService.getAllTodo();
-        return toPromise(todos);
+        return toPromise({ todos });
     }
 
     @Get(':id')
