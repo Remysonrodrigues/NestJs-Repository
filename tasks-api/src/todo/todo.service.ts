@@ -4,9 +4,8 @@ import { toTodoDto } from 'src/shared/mapper';
 import { toPromise } from 'src/shared/utils';
 import * as uuid from 'uuid';
 import { TodoCreateDto } from './dto/todo-create.dto';
-import { TodoListDto } from './dto/todo-list.dto';
 import { TodoDto } from './dto/todo.dto';
-import { TodoEntity } from './entity/todo.entity';
+import { TodoEntity } from '@todo/entity/todo.entity';
 
 @Injectable()
 export class TodoService {

@@ -1,3 +1,22 @@
+import { getConnectionOptions, getConnection } from 'typeorm';
+
 export const toPromise = <T>(data: T): Promise<T> => {
     return new Promise<T>(resolve => { resolve(data); });
+}
+
+export const getDbConnectionOptions = async (connectionName: string = 'default') => {
+    const options = await getDbConnectionOptions(process.env.NODE_ENV || 'development');
+    return {
+        ...options,
+        name: connectionName
+    };
+}
+
+export const getDbConnection = async (connectionName: string = 'default') => {
+    return await getConnection(connectionName);
+}
+
+export const runDbMigrations = async (connectionName: string = 'defaelt') => {
+    const conn = await getConnection(connectionName);
+    await conn.runMigrations();
 }
