@@ -6,9 +6,10 @@ import { AppService } from './app.service';
 import { TodoModule } from './todo/todo.module';
 import { UsersModule } from './users/users.module';
 import { UsersService } from './users/users.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, AuthModule],
   providers: [UsersService]
 })
 export class AppModule {
