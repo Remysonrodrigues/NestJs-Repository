@@ -4,19 +4,31 @@ import { TaskEntity } from "@todo/entity/task.entity";
 import { TodoEntity } from "@todo/entity/todo.entity";
 
 export const toTodoDto = (data: TodoEntity): TodoDto => {
-    const { id, name, description } = data;
+  
+  const { id, name, description, tasks } = data;
 
-    let todoDto: TodoDto = { id, name, description };
-    return todoDto;
+  let todoDto: TodoDto = { id, name, description };
+
+  if (tasks) {
+    todoDto = {
+      ...todoDto,
+      tasks: tasks.map((task: TaskEntity) => toTaskDto(task))
+    };
+  }
+
+  return todoDto;
+
 }
 
 export const toTaskDto = (data: TaskEntity): TaskDto => {
-    const { id, name } = data;
   
-    let taskDto: TaskDto = {
-      id,
-      name,
-    };
-  
-    return taskDto;
-};
+  const { id, name } = data;
+
+  let taskDto: TaskDto = {
+    id,
+    name,
+  };
+
+  return taskDto;
+
+}
