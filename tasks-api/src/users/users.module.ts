@@ -8,4 +8,4 @@ import { UserEntity } from './entity/user.entity';
     providers: [],
     exports: []
 })
-export class UserModule {}
+export class UsersModule {}

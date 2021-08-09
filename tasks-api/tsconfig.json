@@ -13,7 +13,6 @@
     "incremental": true,
     "paths": {
       "@todo/*": ["src/todo/*"],
-      "@user/*": ["src/user/*"],
       "@shared/*": ["src/shared/*"]
     }
   }
