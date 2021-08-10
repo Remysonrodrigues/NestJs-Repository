@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TaskEntity } from '@todo/entity/task.entity';
+import { UserEntity } from "src/users/entity/user.entity";
 
 @Entity('todo')
 export class TodoEntity {
@@ -21,4 +22,7 @@ export class TodoEntity {
 
     @OneToMany(type => TaskEntity, task => task.todo)
     tasks?: TaskEntity[];
+
+    @ManyToOne(type => UserEntity)
+    owner?: UserEntity;
 }
