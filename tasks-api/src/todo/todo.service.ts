@@ -6,13 +6,16 @@ import { TodoDto } from './dto/todo.dto';
 import { TodoEntity } from '@todo/entity/todo.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserDto } from 'src/users/dto/user.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class TodoService {
 
     constructor(
-        @InjectRepository(TodoEntity) private readonly todoRepo: Repository<TodoEntity>
-    ) {}
+        @InjectRepository(TodoEntity) private readonly todoRepo: Repository<TodoEntity>,
+        private readonly usersService: UsersService,
+      ) {}
 
     async getOneTodo(id: string): Promise<TodoDto> {
         
@@ -37,18 +40,21 @@ export class TodoService {
 
     }
 
-    async createTodo(todoDto: TodoCreateDto): Promise<TodoDto> {
+    async createTodo({ username }: UserDto, todoDto: TodoCreateDto): Promise<TodoDto> {
 
         const { name, description } = todoDto
 
+        const owner = await this.usersService.findOne({ where: { username } });
+
         const todo: TodoEntity = await this.todoRepo.create({
             name, 
-            description
+            description, 
+            owner
         });
 
         await this.todoRepo.save(todo);
 
-        return toPromise(toTodoDto(todo));
+        return toTodoDto(todo);
 
     }
 
