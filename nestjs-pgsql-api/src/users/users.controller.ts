@@ -14,12 +14,12 @@ import { Role } from '../auth/decorator/role.decorator';
 import { UserRole } from './enums/user-roles.enum';
 
 @Controller('users')
+@UseGuards(AuthGuard(), RolesGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Post()
   @Role(UserRole.ADMIN)
-  @UseGuards(AuthGuard(), RolesGuard)
   async createAdminUser(
     @Body(ValidationPipe) createUserDto: CreateUserDto,
   ): Promise<ReturnUserDto> {
