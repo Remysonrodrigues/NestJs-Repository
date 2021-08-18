@@ -11,5 +11,5 @@ export const mailerConfig: MailerOptions = {
       layoutsDir: path.resolve(__dirname, '..', '..', 'templates'),
     },
   },
-  transport: `smtps://user@domain.com:pass@smtp.domain.com`,
+  transport: process.env.SMTP_KEY,
 };

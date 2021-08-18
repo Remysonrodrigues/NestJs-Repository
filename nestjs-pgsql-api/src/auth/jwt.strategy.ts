@@ -1,75 +1,30 @@
-import {
-  Controller,
-  Post,
-  Body,
-  ValidationPipe,
-  Get,
-  UseGuards,
-  Patch,
-  Param,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateUserDto } from '../users/dtos/create-user.dto';
-import { CredentialsDto } from './dto/credentials.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { User } from '../users/user.entity';
-import { GetUser } from './decorator/get-user.decorator';
-import { ChangePasswordDto } from './dto/change-password.dto';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, ExtractJwt } from 'passport-jwt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from '../users/users.repository';
 
-@Controller('auth')
-export class AuthController {
-  constructor(private authService: AuthService) {}
-
-  @Post('/signup')
-  async signUp(
-    @Body(ValidationPipe) createUserDto: CreateUserDto,
-  ): Promise<{ message: string }> {
-    await this.authService.signUp(createUserDto);
-    return {
-      message: 'Cadastro realizado com sucesso',
-    };
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.SECRETKEY,
+    });
   }
 
-  @Post('/signin')
-  async signIn(
-    @Body(ValidationPipe) credentiaslsDto: CredentialsDto,
-  ): Promise<{ token: string }> {
-    return await this.authService.signIn(credentiaslsDto);
-  }
+  async validate(payload: { id: number }) {
+    const { id } = payload;
+    const user = await this.userRepository.findOne(id, {
+      select: ['name', 'email', 'status', 'role', 'id'],
+    });
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
 
-  @Patch(':token')
-  async confirmEmail(@Param('token') token: string) {
-    await this.authService.confirmEmail(token);
-    return {
-      message: 'Email confirmado',
-    };
-  }
-
-  @Post('/send-recover-email')
-  async sendRecoverPasswordEmail(
-    @Body('email') email: string,
-  ): Promise<{ message: string }> {
-    await this.authService.sendRecoverPasswordEmail(email);
-    return {
-      message: 'Foi enviado um email com instruções para resetar sua senha',
-    };
-  }
-
-  @Patch('/reset-password/:token')
-  async resetPassword(
-    @Param('token') token: string,
-    @Body(ValidationPipe) changePasswordDto: ChangePasswordDto,
-  ): Promise<{ message: string }> {
-    await this.authService.resetPassword(token, changePasswordDto);
-
-    return {
-      message: 'Senha alterada com sucesso',
-    };
-  }
-
-  @Get('/me')
-  @UseGuards(AuthGuard())
-  getMe(@GetUser() user: User): User {
     return user;
   }
 }
